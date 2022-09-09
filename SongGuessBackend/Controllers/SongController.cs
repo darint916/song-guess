@@ -21,10 +21,10 @@ namespace SongGuessBackend.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{seed:int}",Name = "nameof(GetSong)")]
-        public async Task<IActionResult> GetSong(int seed)
+        [HttpGet("{sessionId:Guid}",Name = "nameof(GetSong)")]
+        public async Task<IActionResult> GetSong(Guid sessionId)
         {
-            var song = await _twiceSongRepo.GetSong(seed);
+            var song = await _twiceSongRepo.GetSong(sessionId);
             if (song == null)
             {
                 return NotFound();
@@ -33,6 +33,17 @@ namespace SongGuessBackend.Controllers
             FileStream fileStream = new FileStream(song.SongPath, FileMode.Open);
 
             return File(fileStream, song.SongMime, song.SongName);
+        }
+
+        [HttpGet("{username:string}", Name = "nameof(GetSessionID)")]
+        public async Task<IActionResult> GetSessionID(string username)
+        {
+            var sessionInfo = await _twiceSongRepo.GetSessionId(username);
+            if (sessionInfo == null)
+            {
+                return NotFound();
+            }
+            
         }
     }
 }

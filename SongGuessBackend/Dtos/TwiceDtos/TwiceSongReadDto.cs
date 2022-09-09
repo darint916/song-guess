@@ -1,4 +1,4 @@
-﻿namespace song_guess_backend.Dtos.TwiceDtos
+﻿namespace SongGuessBackend.Dtos.TwiceDtos
 {
     public class TwiceSongReadDto
     {

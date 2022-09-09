@@ -2,20 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using song_guess_backend.Data.TwiceData;
+using SongGuessBackend.Data.TwiceData;
 
 #nullable disable
 
-namespace song_guess_backend.Migrations
+namespace SongGuessBackend.Migrations
 {
     [DbContext(typeof(TwiceSongContext))]
-    [Migration("20220909154005_InitialMigration")]
-    partial class InitialMigration
+    partial class TwiceSongContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

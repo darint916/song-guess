@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Npgsql;
-using song_guess_backend.Data.TwiceData;
+using SongGuessBackend.Data.TwiceData;
 using SongGuessBackend.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +29,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 var twiceSongConnStr = new NpgsqlConnectionStringBuilder(builder.Configuration["ConnectionStrings:TwiceSongs"]);
 builder.Services.AddDbContext<TwiceSongContext>(options =>
     options.UseNpgsql(twiceSongConnStr.ConnectionString));
+builder.Services.AddDbContext<TwiceSessionInfoContext>(options =>
+    options.UseNpgsql(twiceSongConnStr.ConnectionString));
 
 //Allows serialization/deserialization of json to/from .net types
 builder.Services.AddControllers().AddNewtonsoftJson(s =>
@@ -38,6 +40,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(s =>
 
 //Dependency Injection
 builder.Services.AddScoped<ISongRepo, TwiceSongRepo>();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

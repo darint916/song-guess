@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SongGuessBackend.Models;
 
-namespace song_guess_backend.Data.TwiceData
+namespace SongGuessBackend.Data.TwiceData
 {
     public class TwiceSongContext : DbContext
     {
@@ -10,7 +10,7 @@ namespace song_guess_backend.Data.TwiceData
 
         }
 
-        public DbSet<Song>? Song { get; set; }
+        public DbSet<Song> Song { get; set; }
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
         //    if (!optionsBuilder.IsConfigured)

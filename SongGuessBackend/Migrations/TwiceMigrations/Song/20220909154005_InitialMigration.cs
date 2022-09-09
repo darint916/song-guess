@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace song_guess_backend.Migrations
+namespace SongGuessBackend.Migrations
 {
     public partial class InitialMigration : Migration
     {
