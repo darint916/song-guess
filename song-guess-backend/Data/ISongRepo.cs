@@ -1,6 +1,9 @@
-﻿namespace song_guess_backend.Data
+﻿using SongGuessBackend.Models;
+
+namespace SongGuessBackend.Data
 {
-    public class ISongRepo
+    public interface ISongRepo
     {
+        public Task<Song> GetSong(int seed);
     }
 }

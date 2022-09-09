@@ -1,23 +1,23 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using SongGuessBackend.Data;
 
-namespace song_guess_backend.Controllers
+namespace SongGuessBackend.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class SongController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+        private ISongRepo _twiceSongRepo;
+        private IMapper _mapper;
 
-        private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public SongController(ISongRepo twiceSongRepo, IMapper mapper)
         {
-            _logger = logger;
+            _twiceSongRepo = twiceSongRepo;
+            _mapper = mapper;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
