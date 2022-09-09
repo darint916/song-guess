@@ -23,7 +23,7 @@ namespace song_guess_backend.Data.TwiceData
                 _songAmount = _twiceSongContext.Song.Max(song => song.Id) + 1;
             }
             int rand = random.Next(_songAmount);
-            return await _twiceSongContext.Song.FirstOrDefaultAsync(song => song.Id == rand) ?? throw new InvalidOperationException();;
+            return await _twiceSongContext.Song.FirstOrDefaultAsync(song => song.Id == rand);
         }
     }
 }

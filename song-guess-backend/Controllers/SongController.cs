@@ -1,3 +1,4 @@
+using System.Reflection;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,16 +21,18 @@ namespace SongGuessBackend.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet("{seed:int}",Name = "nameof(GetSong)")]
+        public async Task<IActionResult> GetSong(int seed)
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            var song = await _twiceSongRepo.GetSong(seed);
+            if (song == null)
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+                return NotFound();
+            }
+
+            FileStream fileStream = new FileStream(song.SongPath, FileMode.Open);
+
+            return File(fileStream, song.SongMime, song.SongName);
         }
     }
 }

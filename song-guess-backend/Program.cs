@@ -1,10 +1,44 @@
 using Microsoft.AspNetCore.Authentication.Negotiate;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Serialization;
+using Npgsql;
+using song_guess_backend.Data.TwiceData;
+using SongGuessBackend.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//Enabling CORS for frontend
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontEnd",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000")
+                .SetIsOriginAllowedToAllowWildcardSubdomains()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
 
+
+// Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+//Connection string
+var twiceSongConnStr = new NpgsqlConnectionStringBuilder(builder.Configuration["ConnectionStrings:TwiceSongs"]);
+builder.Services.AddDbContext<TwiceSongContext>(options =>
+    options.UseNpgsql(twiceSongConnStr.ConnectionString));
+
+//Allows serialization/deserialization of json to/from .net types
+builder.Services.AddControllers().AddNewtonsoftJson(s =>
+{
+    s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+});
+
+//Dependency Injection
+builder.Services.AddScoped<ISongRepo, TwiceSongRepo>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -28,6 +62,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontEnd");
 
 app.UseAuthentication();
 app.UseAuthorization();
