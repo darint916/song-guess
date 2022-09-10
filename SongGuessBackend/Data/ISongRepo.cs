@@ -6,5 +6,7 @@ namespace SongGuessBackend.Data
     {
         public Task<Song> GetSong(Guid sessionId);
         public Task<SessionInfo> GetSessionId(string username);
+        public void CreateSession(string username);
+        public bool SaveChanges();
     }
 }

@@ -1,15 +1,18 @@
 using System.Reflection;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using SongGuessBackend.Data;
+using SongGuessBackend.Dtos.TwiceDtos;
 
 namespace SongGuessBackend.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api")]
+    [EnableCors("AllowFrontEnd")]
     public class SongController : ControllerBase
     {
         private ISongRepo _twiceSongRepo;
@@ -21,7 +24,7 @@ namespace SongGuessBackend.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{sessionId:Guid}",Name = "nameof(GetSong)")]
+        [HttpGet("id/{sessionId:Guid}",Name = "nameof(GetSong)")]
         public async Task<IActionResult> GetSong(Guid sessionId)
         {
             var song = await _twiceSongRepo.GetSong(sessionId);
@@ -35,6 +38,10 @@ namespace SongGuessBackend.Controllers
             return File(fileStream, song.SongMime, song.SongName);
         }
 
+        /*
+         * TODO: Add search with password
+         * Creates user with scrambled song ids
+         */
         [HttpGet("{username:string}", Name = "nameof(GetSessionID)")]
         public async Task<IActionResult> GetSessionID(string username)
         {
@@ -43,7 +50,22 @@ namespace SongGuessBackend.Controllers
             {
                 return NotFound();
             }
-            
+            var mapItem = _mapper.Map<TwiceSessionIdReadDto>(sessionInfo);
+            return Ok(mapItem);
+        }
+
+        /*
+         * TODO: Implement with password and dto body. Authentication
+         * Creates user with scrambled song ids
+         */
+
+        [HttpPost("NewSession{username:string}")]
+        public async Task<ActionResult> CreateSession(string username) 
+        {
+            _twiceSongRepo.CreateSession(username);
+            _twiceSongRepo.SaveChanges();
+
+            return CreatedAtRoute(nameof(GetSessionID), new { username }, username); //Change content in the future
         }
     }
 }

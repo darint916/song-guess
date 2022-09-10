@@ -1,6 +1,10 @@
-﻿namespace SongGuessBackend.Dtos.TwiceDtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SongGuessBackend.Dtos.TwiceDtos
 {
-    public class SessionIdReadDto
+    public class TwiceSessionIdReadDto
     {
+        [Required]
+        public Guid SessionId { get; set; }
     }
 }
