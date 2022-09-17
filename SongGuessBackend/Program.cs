@@ -24,7 +24,7 @@ builder.Services.AddCors(options =>
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
+builder.Services.AddHttpContextAccessor();
 //Connection string
 var twiceSongConnStr = new NpgsqlConnectionStringBuilder(builder.Configuration["ConnectionStrings:TwiceSongs"]);
 builder.Services.AddDbContext<TwiceSongContext>(options =>

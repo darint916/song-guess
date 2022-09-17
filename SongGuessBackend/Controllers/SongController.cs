@@ -44,7 +44,7 @@ namespace SongGuessBackend.Controllers
          * TODO: Add search with password
          * Creates user with scrambled song ids
          */
-        [HttpGet("{username:string}", Name = "nameof(GetSessionID)")]
+        [HttpGet("{username}", Name = "nameof(GetSessionID)")]
         public async Task<IActionResult> GetSessionID(string username)
         {
             var sessionInfo = await _twiceSongRepo.GetSessionId(username);
@@ -61,7 +61,7 @@ namespace SongGuessBackend.Controllers
          * Creates user with scrambled song ids
          */
 
-        [HttpPost("NewSession{username:string}", Name = )]
+        [HttpPost("NewSession{username}", Name = "nameof(CreateSession)")]
         public async Task<ActionResult> CreateSession(string username) 
         {
             _twiceSongRepo.CreateSession(username);

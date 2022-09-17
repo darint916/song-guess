@@ -19,7 +19,8 @@ namespace SongGuessBackend.Profiles
         public string? Resolve(Song source, TwiceSongReadDto destination, Guid sourceMember, string destMember,
             ResolutionContext context)
         {
-            return _linkGenerator.GetUriByName(_contextAccessor.HttpContext,
+            return _linkGenerator.GetUriByName(
+                _contextAccessor.HttpContext,
                 nameof(SongController.GetSong),
                 new { Id = sourceMember },
                 fragment: FragmentString.Empty);
