@@ -1,4 +1,5 @@
-﻿using SongGuessBackend.Models;
+﻿using SongGuessBackend.Dtos;
+using SongGuessBackend.Models;
 
 namespace SongGuessBackend.Data
 {
@@ -8,5 +9,6 @@ namespace SongGuessBackend.Data
         public Task<SessionInfo> GetSessionId(string username);
         public void CreateSession(string username);
         public bool SaveChanges();
+        public void CreateSong(IEnumerable<SongCreateDto> songCreateDto);
     }
 }

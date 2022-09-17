@@ -11,7 +11,7 @@ namespace SongGuessBackend.Profiles
             CreateMap<Song, TwiceSongReadDto>()
                 .ForMember(a => a.Url,
                     t => t.MapFrom<SongUrlMapper, Guid>(song => song.SongId));
-            CreateMap<SessionInfo, TwiceSessionIdReadDto>()
+            CreateMap<SessionInfo, TwiceSessionIdReadDto>();
         }
     }
 }

@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using SongGuessBackend.Data;
+using SongGuessBackend.Dtos;
 using SongGuessBackend.Dtos.TwiceDtos;
+using SongGuessBackend.Filters;
 
 namespace SongGuessBackend.Controllers
 {
@@ -59,13 +61,22 @@ namespace SongGuessBackend.Controllers
          * Creates user with scrambled song ids
          */
 
-        [HttpPost("NewSession{username:string}")]
+        [HttpPost("NewSession{username:string}", Name = )]
         public async Task<ActionResult> CreateSession(string username) 
         {
             _twiceSongRepo.CreateSession(username);
             _twiceSongRepo.SaveChanges();
 
             return CreatedAtRoute(nameof(GetSessionID), new { username }, username); //Change content in the future
+        }
+
+        [DevelopmentOnly]
+        [HttpPost("CreateSong")]
+        public async Task<ActionResult> CreateSong(IEnumerable<SongCreateDto> songCreateDto)
+        {
+            _twiceSongRepo.CreateSong(songCreateDto);
+            _twiceSongRepo.SaveChanges();
+            return Ok();
         }
     }
 }
