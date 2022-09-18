@@ -13,7 +13,7 @@ namespace SongGuessBackend.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api")]
+    [Route("api/artists/twice")]
     [EnableCors("AllowFrontEnd")]
     public class SongController : ControllerBase
     {
@@ -26,7 +26,7 @@ namespace SongGuessBackend.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("id/{sessionId:Guid}",Name = "nameof(GetSong)")]
+        [HttpGet("song/{sessionId:Guid}",Name = nameof(GetSong))]
         public async Task<IActionResult> GetSong(Guid sessionId)
         {
             var song = await _twiceSongRepo.GetSong(sessionId);
@@ -44,10 +44,10 @@ namespace SongGuessBackend.Controllers
          * TODO: Add search with password
          * Creates user with scrambled song ids
          */
-        [HttpGet("{username}", Name = "nameof(GetSessionID)")]
-        public async Task<IActionResult> GetSessionID(string username)
+        [HttpGet("users/{nameId}", Name = nameof(GetSessionID))]
+        public async Task<IActionResult> GetSessionID(string nameId)
         {
-            var sessionInfo = await _twiceSongRepo.GetSessionId(username);
+            var sessionInfo = await _twiceSongRepo.GetSessionId(nameId);
             if (sessionInfo == null)
             {
                 return NotFound();
@@ -58,25 +58,34 @@ namespace SongGuessBackend.Controllers
 
         /*
          * TODO: Implement with password and dto body. Authentication
+         * TODO: add created at route
          * Creates user with scrambled song ids
          */
 
-        [HttpPost("NewSession{username}", Name = "nameof(CreateSession)")]
+        [HttpPost("users/{username}", Name = nameof(CreateSession))]
         public async Task<ActionResult> CreateSession(string username) 
         {
             _twiceSongRepo.CreateSession(username);
             _twiceSongRepo.SaveChanges();
 
-            return CreatedAtRoute(nameof(GetSessionID), new { username }, username); //Change content in the future
+            return CreatedAtRoute(nameof(GetSessionID), new { nameId = username }, username); //Change content in the future
         }
 
         [DevelopmentOnly]
-        [HttpPost("CreateSong")]
+        [HttpPost("song", Name ="nameof(CreateSong)")]
         public async Task<ActionResult> CreateSong(IEnumerable<SongCreateDto> songCreateDto)
         {
             _twiceSongRepo.CreateSong(songCreateDto);
             _twiceSongRepo.SaveChanges();
             return Ok();
+        }
+
+        [DevelopmentOnly]
+        [HttpGet("song/{id}", Name = nameof(GetSongInfo))]
+        public async Task<ActionResult> GetSongInfo(int id)
+        {
+            var song = await _twiceSongRepo.GetSongInfo(id);
+            return Ok(song);
         }
     }
 }
