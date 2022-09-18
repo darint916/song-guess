@@ -26,10 +26,11 @@ namespace SongGuessBackend.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("song/{sessionId:Guid}",Name = nameof(GetSong))]
+        [HttpPatch("song/{sessionId:Guid}",Name = nameof(GetSong))]
         public async Task<IActionResult> GetSong(Guid sessionId)
         {
             var song = await _twiceSongRepo.GetSong(sessionId);
+            _twiceSongRepo.SaveChanges();
             if (song == null)
             {
                 return NotFound();
@@ -70,6 +71,8 @@ namespace SongGuessBackend.Controllers
 
             return CreatedAtRoute(nameof(GetSessionID), new { nameId = username }, username); //Change content in the future
         }
+
+        [HttpGet()]
 
         [DevelopmentOnly]
         [HttpPost("song", Name ="nameof(CreateSong)")]

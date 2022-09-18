@@ -31,6 +31,8 @@ builder.Services.AddDbContext<TwiceSongContext>(options =>
     options.UseNpgsql(twiceSongConnStr.ConnectionString));
 builder.Services.AddDbContext<TwiceSessionInfoContext>(options =>
     options.UseNpgsql(twiceSongConnStr.ConnectionString));
+builder.Services.AddDbContext<TwiceLeaderboardContext>(options =>
+    options.UseNpgsql(twiceSongConnStr.ConnectionString));
 
 //Allows serialization/deserialization of json to/from .net types
 builder.Services.AddControllers().AddNewtonsoftJson(s =>

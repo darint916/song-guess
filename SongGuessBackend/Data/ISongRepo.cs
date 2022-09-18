@@ -10,5 +10,6 @@ namespace SongGuessBackend.Data
         public void CreateSession(string username);
         public bool SaveChanges();
         public void CreateSong(IEnumerable<SongCreateDto> songCreateDto);
+        public Task<Song> GetSongInfo(int id);
     }
 }

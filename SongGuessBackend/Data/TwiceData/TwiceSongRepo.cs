@@ -10,13 +10,11 @@ namespace SongGuessBackend.Data.TwiceData
 {
     public class TwiceSongRepo : ISongRepo
     {
-        private int _songAmount;
         private readonly TwiceSongContext _twiceSongContext;
         private readonly TwiceSessionInfoContext _twiceSessionInfoContext;
 
         public TwiceSongRepo(TwiceSongContext twiceSongContext, TwiceSessionInfoContext twiceSessionInfoContextContext)
         {
-            _songAmount = twiceSongContext.Song.Max(song => song.Id) + 1;
             _twiceSongContext = twiceSongContext;
             _twiceSessionInfoContext = twiceSessionInfoContextContext;
         }
@@ -26,25 +24,21 @@ namespace SongGuessBackend.Data.TwiceData
             {
                 var session = await _twiceSessionInfoContext.SessionInfo.FirstAsync(x => x.SessionId == sessionId);
                 int count = session.RandomSongIndexList.Count;
-                if (count < _songAmount)  //creates a new shuffled list when new songs are added to db
+                int songAmount = _twiceSongContext.Song.Max(song => song.Id) + 1;
+                if (count != songAmount)  //creates a new shuffled list when new songs are added to db
                 {
-                    while (count < _songAmount)
-                    {
-                        session.RandomSongIndexList.Add(count);
-                        count++;
-                    }
-                    ShuffleList(sessionId.GetHashCode(), session.RandomSongIndexList);
+                    List<int> list = Enumerable.Range(0, songAmount).ToList();
+                    ShuffleList(sessionId.GetHashCode(), list);
+                    session.RandomSongIndexList = list;
                     session.SongNumber = 0;
                 }
-
-              
-                if (session.SongNumber >= _songAmount) //Reshuffles list when all songs have been played
+                session.SongNumber++;
+                if (session.SongNumber >= songAmount) //Reshuffles list when all songs have been played
                 {
                     ShuffleList(sessionId.GetHashCode(), session.RandomSongIndexList);
                     session.SongNumber = 0;
                 }
                 int id = session.RandomSongIndexList[session.SongNumber];
-                session.SongNumber++;
                 return await _twiceSongContext.Song.FirstAsync(x => x.Id == id);
             }
             catch (Exception e)
@@ -71,9 +65,9 @@ namespace SongGuessBackend.Data.TwiceData
             //Add username validation, add password in future
             if (username == null) throw new ArgumentNullException(nameof(username));
             //Finds total amount of songs
-
+            int songAmount = _twiceSongContext.Song.Max(song => song.Id) + 1;
             Guid sessionId = new Guid();
-            List<int> list = Enumerable.Range(0, _songAmount).ToList();
+            List<int> list = Enumerable.Range(0, songAmount).ToList();
             ShuffleList(sessionId.GetHashCode(), list);
 
             var session = new SessionInfo
@@ -90,12 +84,15 @@ namespace SongGuessBackend.Data.TwiceData
         public bool SaveChanges()
         {
             return (_twiceSessionInfoContext.SaveChanges() >= 0);
+            return (_twiceSongContext.SaveChanges() >= 0);
         }
 
         public void CreateSong(IEnumerable<SongCreateDto> songCreateDto)
         {
+            int songAmount = _twiceSongContext.Song.Max(song => song.Id) + 1;
             foreach (var song in songCreateDto)
             {
+                Guid songId = new Guid();
                 var songItem = new Song
                 {
                     SongName = song.SongName,
@@ -103,12 +100,18 @@ namespace SongGuessBackend.Data.TwiceData
                     SongLength = song.SongLength,
                     SongAlbum = song.SongAlbum,
                     SongMime = song.SongMime,
-                    SongId = new Guid(),
-                    //Id = _songAmount,
+                    SongId = songId,
+                    //Id = songAmount,
                 };
-                _songAmount += 1;
+                //songAmount += 1;
                 _twiceSongContext.Add(songItem);
             }
+        }
+
+        
+        public async Task<Song> GetSongInfo(int id)
+        {
+            return await _twiceSongContext.Song.FirstAsync(x => x.Id == id);
         }
 
         public void ShuffleList(int seed, List<int> list)
@@ -121,5 +124,7 @@ namespace SongGuessBackend.Data.TwiceData
                 (list[n], list[k]) = (list[k], list[n]);
             }
         }
+
+        
     }
 }
