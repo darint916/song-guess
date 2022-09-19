@@ -82,6 +82,7 @@ namespace SongGuessBackend.Controllers
         }
 
         /*
+         * TODO: ADD Query for determining when player gives up, revealing song name, disable song add
          * PATCH api/artists/twice/users/{sessionId:Guid}/song/{songName}/verify
          * Called when guessing, checks if song name matches, adds to score
          */

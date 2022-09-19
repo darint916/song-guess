@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using SongGuessBackend.Dtos;
 using SongGuessBackend.Profiles;
 
+/*
+ * TODO: Add score reset for end of game, push to leaderboard?
+ */
 namespace SongGuessBackend.Data.TwiceData
 {
     public class TwiceSongRepo : ISongRepo
@@ -40,6 +43,7 @@ namespace SongGuessBackend.Data.TwiceData
                     session.SongNumber = 0;
                 }
                 int id = session.RandomSongIndexList[session.SongNumber];
+                session.GuessedCurrent = false;
                 return await _twiceSongContext.Song.FirstAsync(x => x.Id == id);
             }
             catch (Exception e)
@@ -78,6 +82,10 @@ namespace SongGuessBackend.Data.TwiceData
                 Seed = sessionId.GetHashCode(),
                 SongNumber = 0,
                 RandomSongIndexList = list,
+                GuessedCurrent = false,
+                Mode = "default",
+                Score = 0,
+                SongsGuessed = 0,
             };
             _twiceSessionInfoContext.Add(session);
         }
@@ -114,6 +122,10 @@ namespace SongGuessBackend.Data.TwiceData
             return await _twiceSongContext.Song.FirstAsync(x => x.Id == id);
         }
 
+        /*
+         * TODO: Based on current mode of session, add a score multiplied by mode.
+         * TODO: SongsGuessed more details, # guessed per song names (dict)
+         */
         public async Task<String?> VerifySong(Guid sessionId, string songName)
         {
             try
@@ -121,14 +133,13 @@ namespace SongGuessBackend.Data.TwiceData
                 var session = await _twiceSessionInfoContext.SessionInfo.FirstAsync(x => x.SessionId == sessionId);
                 int songId = session.RandomSongIndexList[session.SongNumber];
                 var song = await _twiceSongContext.Song.FirstAsync(x => x.Id == songId);
-                if (song.SongName == songName)
+                if (song.SongName == songName && !session.GuessedCurrent)
                 {
+                    session.GuessedCurrent = true;
+                    session.SongsGuessed++;
                     return songName;
                 }
-                else
-                {
-                    return null;
-                }
+                return null;
             }
             catch
             {
