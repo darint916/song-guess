@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SongGuessBackend.Dtos;
 using SongGuessBackend.Dtos.TwiceDtos;
 using SongGuessBackend.Models;
 
@@ -12,6 +13,7 @@ namespace SongGuessBackend.Profiles
                 .ForMember(a => a.Url,
                     t => t.MapFrom<SongUrlMapper, Guid>(song => song.SongId));
             CreateMap<SessionInfo, TwiceSessionIdReadDto>();
+            CreateMap<Song, GeneralSongReadDto>();
         }
     }
 }

@@ -12,11 +12,12 @@ namespace SongGuessBackend.Data.TwiceData
     {
         private readonly TwiceSongContext _twiceSongContext;
         private readonly TwiceSessionInfoContext _twiceSessionInfoContext;
-
-        public TwiceSongRepo(TwiceSongContext twiceSongContext, TwiceSessionInfoContext twiceSessionInfoContextContext)
+        private readonly TwiceLeaderboardContext _twiceLeaderboardContext;
+        public TwiceSongRepo(TwiceSongContext twiceSongContext, TwiceSessionInfoContext twiceSessionInfoContextContext, TwiceLeaderboardContext twiceLeaderboardContext)
         {
             _twiceSongContext = twiceSongContext;
             _twiceSessionInfoContext = twiceSessionInfoContextContext;
+            _twiceLeaderboardContext = twiceLeaderboardContext;
         }
         public async Task<Song> GetSong(Guid sessionId)
         {
@@ -83,8 +84,7 @@ namespace SongGuessBackend.Data.TwiceData
 
         public bool SaveChanges()
         {
-            return (_twiceSessionInfoContext.SaveChanges() >= 0);
-            return (_twiceSongContext.SaveChanges() >= 0);
+            return (_twiceSessionInfoContext.SaveChanges() >= 0 && _twiceSongContext.SaveChanges() >= 0);
         }
 
         public void CreateSong(IEnumerable<SongCreateDto> songCreateDto)
@@ -114,6 +114,33 @@ namespace SongGuessBackend.Data.TwiceData
             return await _twiceSongContext.Song.FirstAsync(x => x.Id == id);
         }
 
+        public async Task<String?> VerifySong(Guid sessionId, string songName)
+        {
+            try
+            {
+                var session = await _twiceSessionInfoContext.SessionInfo.FirstAsync(x => x.SessionId == sessionId);
+                int songId = session.RandomSongIndexList[session.SongNumber];
+                var song = await _twiceSongContext.Song.FirstAsync(x => x.Id == songId);
+                if (song.SongName == songName)
+                {
+                    return songName;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<Song>> GetAllSongs()
+        {
+            return await _twiceSongContext.Song.ToListAsync();
+        } 
+
         public void ShuffleList(int seed, List<int> list)
         {
             Random rand = new Random(seed);
@@ -126,5 +153,7 @@ namespace SongGuessBackend.Data.TwiceData
         }
 
         
+
+
     }
 }

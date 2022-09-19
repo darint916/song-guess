@@ -1,4 +1,5 @@
-﻿using SongGuessBackend.Dtos;
+﻿using Microsoft.AspNetCore.Mvc;
+using SongGuessBackend.Dtos;
 using SongGuessBackend.Models;
 
 namespace SongGuessBackend.Data
@@ -11,5 +12,7 @@ namespace SongGuessBackend.Data
         public bool SaveChanges();
         public void CreateSong(IEnumerable<SongCreateDto> songCreateDto);
         public Task<Song> GetSongInfo(int id);
+        public Task<String?> VerifySong(Guid sessionId, string songName);
+        public Task<IEnumerable<Song>> GetAllSongs();
     }
 }
