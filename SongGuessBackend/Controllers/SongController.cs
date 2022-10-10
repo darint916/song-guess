@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Routing;
 using SongGuessBackend.Data;
 using SongGuessBackend.Dtos;
 using SongGuessBackend.Dtos.TwiceDtos;
@@ -20,11 +21,20 @@ namespace SongGuessBackend.Controllers
     {
         private ISongRepo _twiceSongRepo;
         private IMapper _mapper;
+        private readonly LinkGenerator _linkGenerator;
+        private readonly Func<Guid, string?> _assetLinkGenerator;
 
-        public SongController(ISongRepo twiceSongRepo, IMapper mapper)
+        public SongController(ISongRepo twiceSongRepo, IMapper mapper, LinkGenerator linkGenerator)
         {
             _twiceSongRepo = twiceSongRepo;
             _mapper = mapper;
+
+            _linkGenerator = linkGenerator;
+            _assetLinkGenerator = assetId =>
+                _linkGenerator.GetUriByName(HttpContext,
+                    nameof(GetSong),
+                    new { Id = assetId },
+                    fragment: FragmentString.Empty);
         }
 
         /*
@@ -33,6 +43,8 @@ namespace SongGuessBackend.Controllers
          * Changes song index, and returns song file
          */
         [HttpPatch("song/{sessionId:Guid}",Name = nameof(GetSong))]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(typeof(####), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetSong(Guid sessionId)
         {
             var song = await _twiceSongRepo.GetSong(sessionId);
@@ -46,6 +58,12 @@ namespace SongGuessBackend.Controllers
 
             return File(fileStream, song.SongMime, song.SongId.ToString());
         }
+
+        //[HttpGet("song/wrap/{sessionId:Guid}", Name = nameof(GetSongInfo))]
+        //public async Task<ActionResult<TwiceSongReadDto>> GetSongInfo(Guid sessionId)
+        //{
+
+        //} 
 
         /*
          * TODO: Add password and token to search
