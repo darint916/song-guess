@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  songguessbackend:
+    image: ${DOCKER_REGISTRY-}songguessbackend
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+  #postgres:
+  #  image: postgres:latest
+  #  environment:
+  #  blkio_config:
+  
