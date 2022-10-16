@@ -7,8 +7,8 @@ services:
       context: .
       dockerfile: Dockerfile
 
-  #postgres:
-  #  image: postgres:latest
-  #  environment:
-  #  blkio_config:
+  postgres:
+    image: postgres:latest
+    environment:
+    blkio_config:
   
