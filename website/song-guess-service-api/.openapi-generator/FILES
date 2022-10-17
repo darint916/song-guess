@@ -1,0 +1,9 @@
+.openapi-generator-ignore
+apis/SongApi.ts
+apis/index.ts
+index.ts
+models/GeneralSongReadDto.ts
+models/Song.ts
+models/SongCreateDto.ts
+models/index.ts
+runtime.ts
